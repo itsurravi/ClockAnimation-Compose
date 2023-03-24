@@ -45,7 +45,7 @@ fun Step2ShrinkAndExtendArrowPreview() {
                 .background(Color.Black)
                 .padding(16.dp)
         ) {
-            ClockAnimation(duration = 6000)
+            ClockAnimation(duration = 20000)
         }
     }
 }
@@ -75,6 +75,16 @@ fun ClockAnimation(duration: Int) {
                 index > currentHour - 12 -> true
                 else -> false
             }
+        }
+    }
+
+    val dotsPositions = remember(animationAngle) {
+        List(12) { currentDot ->
+            val easing = LinearOutSlowInEasing
+            val degreeLimit  = 45f
+            val startAngle = currentDot * 30f
+            val currentDeg = (animationAngle - startAngle).coerceIn(0f, degreeLimit)
+            easing.transform(currentDeg / degreeLimit)
         }
     }
 
@@ -175,7 +185,7 @@ fun ClockAnimation(duration: Int) {
                     rotate(degree, pivot = center) {
                         // Based on the hour value, the travel distance will be longer.
                         val positionY =
-                            halfStroke + stepHeight * it * (1 - disassembleAnimations[it].value)
+                            halfStroke + stepHeight * it * (1 - dotsPositions[it])
 
                         val start = Offset(size.width / 2, positionY - halfStroke)
                         val end = Offset(size.width / 2, positionY + halfStroke)
